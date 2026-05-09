@@ -51,3 +51,41 @@ INSERT IGNORE INTO visits VALUES (1, 7, '2010-03-04', 'rabies shot');
 INSERT IGNORE INTO visits VALUES (2, 8, '2011-03-04', 'rabies shot');
 INSERT IGNORE INTO visits VALUES (3, 8, '2009-06-04', 'neutered');
 INSERT IGNORE INTO visits VALUES (4, 7, '2008-09-04', 'spayed');
+
+-- Vet working hours: Mon(0)-Fri(4) 09:00-17:00 for all vets
+INSERT IGNORE INTO vet_working_hours VALUES (1, 1, 0, '09:00:00', '17:00:00');
+INSERT IGNORE INTO vet_working_hours VALUES (2, 1, 1, '09:00:00', '17:00:00');
+INSERT IGNORE INTO vet_working_hours VALUES (3, 1, 2, '09:00:00', '17:00:00');
+INSERT IGNORE INTO vet_working_hours VALUES (4, 1, 3, '09:00:00', '17:00:00');
+INSERT IGNORE INTO vet_working_hours VALUES (5, 1, 4, '09:00:00', '17:00:00');
+INSERT IGNORE INTO vet_working_hours VALUES (6, 2, 0, '09:00:00', '17:00:00');
+INSERT IGNORE INTO vet_working_hours VALUES (7, 2, 1, '09:00:00', '17:00:00');
+INSERT IGNORE INTO vet_working_hours VALUES (8, 2, 2, '09:00:00', '17:00:00');
+INSERT IGNORE INTO vet_working_hours VALUES (9, 2, 3, '09:00:00', '17:00:00');
+INSERT IGNORE INTO vet_working_hours VALUES (10, 2, 4, '09:00:00', '17:00:00');
+INSERT IGNORE INTO vet_working_hours VALUES (11, 3, 0, '09:00:00', '17:00:00');
+INSERT IGNORE INTO vet_working_hours VALUES (12, 3, 1, '09:00:00', '17:00:00');
+INSERT IGNORE INTO vet_working_hours VALUES (13, 3, 2, '09:00:00', '17:00:00');
+INSERT IGNORE INTO vet_working_hours VALUES (14, 3, 3, '09:00:00', '17:00:00');
+INSERT IGNORE INTO vet_working_hours VALUES (15, 3, 4, '09:00:00', '17:00:00');
+INSERT IGNORE INTO vet_working_hours VALUES (16, 4, 0, '09:00:00', '17:00:00');
+INSERT IGNORE INTO vet_working_hours VALUES (17, 4, 1, '09:00:00', '17:00:00');
+INSERT IGNORE INTO vet_working_hours VALUES (18, 4, 2, '09:00:00', '17:00:00');
+INSERT IGNORE INTO vet_working_hours VALUES (19, 4, 3, '09:00:00', '17:00:00');
+INSERT IGNORE INTO vet_working_hours VALUES (20, 4, 4, '09:00:00', '17:00:00');
+INSERT IGNORE INTO vet_working_hours VALUES (21, 5, 0, '09:00:00', '17:00:00');
+INSERT IGNORE INTO vet_working_hours VALUES (22, 5, 1, '09:00:00', '17:00:00');
+INSERT IGNORE INTO vet_working_hours VALUES (23, 5, 2, '09:00:00', '17:00:00');
+INSERT IGNORE INTO vet_working_hours VALUES (24, 5, 3, '09:00:00', '17:00:00');
+INSERT IGNORE INTO vet_working_hours VALUES (25, 5, 4, '09:00:00', '17:00:00');
+INSERT IGNORE INTO vet_working_hours VALUES (26, 6, 0, '09:00:00', '17:00:00');
+INSERT IGNORE INTO vet_working_hours VALUES (27, 6, 1, '09:00:00', '17:00:00');
+INSERT IGNORE INTO vet_working_hours VALUES (28, 6, 2, '09:00:00', '17:00:00');
+INSERT IGNORE INTO vet_working_hours VALUES (29, 6, 3, '09:00:00', '17:00:00');
+INSERT IGNORE INTO vet_working_hours VALUES (30, 6, 4, '09:00:00', '17:00:00');
+
+-- Migrate existing visits to appointments (as COMPLETED)
+INSERT IGNORE INTO appointments VALUES (1, 7, 1, '2010-03-04', '09:00:00', '09:30:00', 30, 'COMPLETED', 'VACCINATION', 'rabies shot', 'Rabies vaccination administered', NULL, '2010-03-04 09:00:00', '2010-03-04 09:30:00');
+INSERT IGNORE INTO appointments VALUES (2, 8, 1, '2011-03-04', '09:00:00', '09:30:00', 30, 'COMPLETED', 'VACCINATION', 'rabies shot', 'Rabies vaccination administered', NULL, '2011-03-04 09:00:00', '2011-03-04 09:30:00');
+INSERT IGNORE INTO appointments VALUES (3, 8, 2, '2009-06-04', '10:00:00', '11:00:00', 60, 'COMPLETED', 'SURGERY', 'neutered', 'Neutering procedure completed successfully', NULL, '2009-06-04 10:00:00', '2009-06-04 11:00:00');
+INSERT IGNORE INTO appointments VALUES (4, 7, 3, '2008-09-04', '14:00:00', '15:00:00', 60, 'COMPLETED', 'SURGERY', 'spayed', 'Spaying procedure completed successfully', NULL, '2008-09-04 14:00:00', '2008-09-04 15:00:00');

@@ -53,3 +53,46 @@ CREATE TABLE IF NOT EXISTS visits (
   description VARCHAR(255),
   FOREIGN KEY (pet_id) REFERENCES pets(id)
 ) engine=InnoDB;
+
+CREATE TABLE IF NOT EXISTS appointments (
+  id INT(4) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  pet_id INT(4) UNSIGNED NOT NULL,
+  vet_id INT(4) UNSIGNED NOT NULL,
+  appointment_date DATE NOT NULL,
+  start_time TIME NOT NULL,
+  end_time TIME NOT NULL,
+  duration_minutes INT NOT NULL DEFAULT 30,
+  status VARCHAR(20) NOT NULL DEFAULT 'CONFIRMED',
+  appointment_type VARCHAR(20) NOT NULL DEFAULT 'CHECKUP',
+  description VARCHAR(500),
+  visit_notes VARCHAR(2000),
+  cancelled_reason VARCHAR(500),
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  FOREIGN KEY (pet_id) REFERENCES pets(id),
+  FOREIGN KEY (vet_id) REFERENCES vets(id),
+  INDEX(vet_id, appointment_date),
+  INDEX(pet_id),
+  INDEX(appointment_date)
+) engine=InnoDB;
+
+CREATE TABLE IF NOT EXISTS vet_working_hours (
+  id INT(4) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  vet_id INT(4) UNSIGNED NOT NULL,
+  day_of_week INT NOT NULL,
+  start_time TIME NOT NULL,
+  end_time TIME NOT NULL,
+  FOREIGN KEY (vet_id) REFERENCES vets(id),
+  INDEX(vet_id)
+) engine=InnoDB;
+
+CREATE TABLE IF NOT EXISTS vet_time_blocks (
+  id INT(4) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  vet_id INT(4) UNSIGNED NOT NULL,
+  block_date DATE NOT NULL,
+  start_time TIME NOT NULL,
+  end_time TIME NOT NULL,
+  reason VARCHAR(255),
+  FOREIGN KEY (vet_id) REFERENCES vets(id),
+  INDEX(vet_id, block_date)
+) engine=InnoDB;
