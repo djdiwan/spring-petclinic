@@ -23,33 +23,46 @@ class App extends Component {
   loadTasks() {
     fetchTasks()
       .then(tasks => this.setState({ tasks, loading: false }))
-      .catch(error => this.setState({ error: error.message, loading: false }));
+      .catch(() => this.setState({ error: 'Failed to load tasks. Please try again.', loading: false }));
   }
 
   handleAddTask(title) {
     const newTask = { title, completed: false };
-    addTask(newTask).then(task => {
-      this.setState(prevState => ({
-        tasks: [...prevState.tasks, task],
-      }));
-    });
+    addTask(newTask)
+      .then(task => {
+        this.setState(prevState => ({
+          tasks: [...prevState.tasks, task],
+        }));
+      })
+      .catch(() => {
+        this.setState({ error: 'Failed to add task. Please try again.' });
+      });
   }
 
   handleToggleComplete(id) {
     const task = this.state.tasks.find(t => t.id === id);
-    updateTask(id, { completed: !task.completed }).then(updated => {
-      this.setState(prevState => ({
-        tasks: prevState.tasks.map(t => (t.id === id ? updated : t)),
-      }));
-    });
+    if (!task) return;
+    updateTask(id, { completed: !task.completed })
+      .then(updated => {
+        this.setState(prevState => ({
+          tasks: prevState.tasks.map(t => (t.id === id ? updated : t)),
+        }));
+      })
+      .catch(() => {
+        this.setState({ error: 'Failed to update task. Please try again.' });
+      });
   }
 
   handleDeleteTask(id) {
-    deleteTask(id).then(() => {
-      this.setState(prevState => ({
-        tasks: prevState.tasks.filter(t => t.id !== id),
-      }));
-    });
+    deleteTask(id)
+      .then(() => {
+        this.setState(prevState => ({
+          tasks: prevState.tasks.filter(t => t.id !== id),
+        }));
+      })
+      .catch(() => {
+        this.setState({ error: 'Failed to delete task. Please try again.' });
+      });
   }
 
   render() {

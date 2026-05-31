@@ -29,6 +29,7 @@ class TaskForm extends Component {
           placeholder="Add a new task..."
           value={this.state.title}
           onChange={this.handleChange}
+          maxLength={256}
         />
         <button type="submit" className="btn-add">
           Add
