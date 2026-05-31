@@ -1,4 +1,4 @@
-const API_URL = 'http://localhost:3000/tasks';
+const API_URL = '/tasks';
 
 export function fetchTasks() {
   return fetch(API_URL).then(res => res.json());
