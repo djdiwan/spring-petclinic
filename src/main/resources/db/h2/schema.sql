@@ -1,3 +1,6 @@
+DROP TABLE appointments IF EXISTS;
+DROP TABLE vet_time_blocks IF EXISTS;
+DROP TABLE vet_working_hours IF EXISTS;
 DROP TABLE vet_specialties IF EXISTS;
 DROP TABLE vets IF EXISTS;
 DROP TABLE specialties IF EXISTS;
@@ -62,3 +65,44 @@ CREATE TABLE visits (
 );
 ALTER TABLE visits ADD CONSTRAINT fk_visits_pets FOREIGN KEY (pet_id) REFERENCES pets (id);
 CREATE INDEX visits_pet_id ON visits (pet_id);
+
+CREATE TABLE appointments (
+  id                 INTEGER IDENTITY PRIMARY KEY,
+  pet_id             INTEGER NOT NULL,
+  vet_id             INTEGER NOT NULL,
+  appointment_date   DATE NOT NULL,
+  start_time         TIME NOT NULL,
+  end_time           TIME NOT NULL,
+  duration_minutes   INTEGER NOT NULL DEFAULT 30,
+  status             VARCHAR(20) NOT NULL DEFAULT 'CONFIRMED',
+  appointment_type   VARCHAR(20) NOT NULL DEFAULT 'CHECKUP',
+  description        VARCHAR(500),
+  visit_notes        VARCHAR(2000),
+  cancelled_reason   VARCHAR(500),
+  created_at         TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at         TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+ALTER TABLE appointments ADD CONSTRAINT fk_appointments_pets FOREIGN KEY (pet_id) REFERENCES pets (id);
+ALTER TABLE appointments ADD CONSTRAINT fk_appointments_vets FOREIGN KEY (vet_id) REFERENCES vets (id);
+CREATE INDEX idx_appointments_vet_date ON appointments (vet_id, appointment_date);
+CREATE INDEX idx_appointments_pet ON appointments (pet_id);
+CREATE INDEX idx_appointments_date ON appointments (appointment_date);
+
+CREATE TABLE vet_working_hours (
+  id          INTEGER IDENTITY PRIMARY KEY,
+  vet_id      INTEGER NOT NULL,
+  day_of_week INTEGER NOT NULL,
+  start_time  TIME NOT NULL,
+  end_time    TIME NOT NULL
+);
+ALTER TABLE vet_working_hours ADD CONSTRAINT fk_working_hours_vets FOREIGN KEY (vet_id) REFERENCES vets (id);
+
+CREATE TABLE vet_time_blocks (
+  id          INTEGER IDENTITY PRIMARY KEY,
+  vet_id      INTEGER NOT NULL,
+  block_date  DATE NOT NULL,
+  start_time  TIME NOT NULL,
+  end_time    TIME NOT NULL,
+  reason      VARCHAR(255)
+);
+ALTER TABLE vet_time_blocks ADD CONSTRAINT fk_time_blocks_vets FOREIGN KEY (vet_id) REFERENCES vets (id);

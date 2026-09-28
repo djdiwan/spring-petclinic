@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+
+<html xmlns:th="https://www.thymeleaf.org" th:replace="~{fragments/layout :: layout (~{::body},'appointments')}">
+
+<body>
+
+  <h2>Appointment Details</h2>
+
+  <div th:if="${message}" class="alert alert-success">
+    <p th:text="${message}">Success</p>
+  </div>
+  <div th:if="${error}" class="alert alert-danger">
+    <p th:text="${error}">Error</p>
+  </div>
+
+  <table class="table table-striped">
+    <tr>
+      <th>Pet</th>
+      <td>
+        <span th:text="${appointment.pet.name}">Pet</span>
+        <span th:if="${appointment.pet.owner != null}">
+          (Owner: <a th:href="@{/owners/{id}(id=${appointment.pet.owner.id})}"
+                     th:text="${appointment.pet.owner.firstName + ' ' + appointment.pet.owner.lastName}">Owner</a>)
+        </span>
+      </td>
+    </tr>
+    <tr>
+      <th>Veterinarian</th>
+      <td th:text="${appointment.vet.firstName + ' ' + appointment.vet.lastName}">Vet</td>
+    </tr>
+    <tr>
+      <th>Date</th>
+      <td th:text="${appointment.appointmentDate}">Date</td>
+    </tr>
+    <tr>
+      <th>Time</th>
+      <td th:text="${appointment.startTime + ' - ' + appointment.endTime}">Time</td>
+    </tr>
+    <tr>
+      <th>Duration</th>
+      <td th:text="${appointment.durationMinutes + ' minutes'}">Duration</td>
+    </tr>
+    <tr>
+      <th>Type</th>
+      <td th:text="${appointment.appointmentType}">Type</td>
+    </tr>
+    <tr>
+      <th>Status</th>
+      <td>
+        <span class="label"
+              th:classappend="${appointment.status.name() == 'CONFIRMED' ? 'label-primary' :
+                               appointment.status.name() == 'COMPLETED' ? 'label-success' :
+                               appointment.status.name() == 'CANCELLED' ? 'label-danger' :
+                               appointment.status.name() == 'NO_SHOW' ? 'label-warning' :
+                               appointment.status.name() == 'IN_PROGRESS' ? 'label-info' :
+                               'label-default'}"
+              th:text="${appointment.status}">Status</span>
+      </td>
+    </tr>
+    <tr th:if="${appointment.description != null and !appointment.description.isEmpty()}">
+      <th>Description</th>
+      <td th:text="${appointment.description}">Description</td>
+    </tr>
+    <tr th:if="${appointment.visitNotes != null and !appointment.visitNotes.isEmpty()}">
+      <th>Visit Notes</th>
+      <td th:text="${appointment.visitNotes}">Notes</td>
+    </tr>
+    <tr th:if="${appointment.cancelledReason != null and !appointment.cancelledReason.isEmpty()}">
+      <th>Cancellation Reason</th>
+      <td th:text="${appointment.cancelledReason}">Reason</td>
+    </tr>
+    <tr>
+      <th>Created</th>
+      <td th:text="${appointment.createdAt}">Created</td>
+    </tr>
+  </table>
+
+  <!-- Status Update Actions -->
+  <div th:if="${appointment.status.name() != 'COMPLETED' and appointment.status.name() != 'CANCELLED' and appointment.status.name() != 'NO_SHOW'}">
+    <h3>Actions</h3>
+
+    <!-- Check In -->
+    <div th:if="${appointment.status.name() == 'CONFIRMED'}" style="margin-bottom: 10px;">
+      <form th:action="@{/appointments/{id}/status(id=${appointment.id})}" method="post" style="display:inline;">
+        <input type="hidden" name="newStatus" value="CHECKED_IN" />
+        <button class="btn btn-primary" type="submit">Check In</button>
+      </form>
+      <form th:action="@{/appointments/{id}/status(id=${appointment.id})}" method="post" style="display:inline;">
+        <input type="hidden" name="newStatus" value="NO_SHOW" />
+        <button class="btn btn-warning" type="submit">Mark No-Show</button>
+      </form>
+    </div>
+
+    <!-- Start -->
+    <div th:if="${appointment.status.name() == 'CHECKED_IN'}" style="margin-bottom: 10px;">
+      <form th:action="@{/appointments/{id}/status(id=${appointment.id})}" method="post" style="display:inline;">
+        <input type="hidden" name="newStatus" value="IN_PROGRESS" />
+        <button class="btn btn-info" type="submit">Start Appointment</button>
+      </form>
+    </div>
+
+    <!-- Complete -->
+    <div th:if="${appointment.status.name() == 'IN_PROGRESS'}" style="margin-bottom: 10px;">
+      <form th:action="@{/appointments/{id}/status(id=${appointment.id})}" method="post">
+        <input type="hidden" name="newStatus" value="COMPLETED" />
+        <div class="form-group">
+          <label>Visit Notes (required):</label>
+          <textarea name="visitNotes" class="form-control" rows="3" required="required"></textarea>
+        </div>
+        <button class="btn btn-success" type="submit">Complete Appointment</button>
+      </form>
+    </div>
+
+    <!-- Cancel -->
+    <div style="margin-top: 15px;">
+      <h4>Cancel Appointment</h4>
+      <form th:action="@{/appointments/{id}/cancel(id=${appointment.id})}" method="post">
+        <div class="form-group">
+          <label>Cancellation Reason (required):</label>
+          <textarea name="cancelledReason" class="form-control" rows="2" required="required"></textarea>
+        </div>
+        <button class="btn btn-danger" type="submit">Cancel Appointment</button>
+      </form>
+    </div>
+
+    <!-- Reschedule -->
+    <div th:if="${appointment.status.name() == 'CONFIRMED' or appointment.status.name() == 'REQUESTED'}" style="margin-top: 15px;">
+      <h4>Reschedule</h4>
+      <form th:action="@{/appointments/{id}/reschedule(id=${appointment.id})}" method="post" class="form-inline">
+        <div class="form-group" style="margin-right: 10px;">
+          <label>New Date: </label>
+          <input type="date" name="newDate" class="form-control" required="required" />
+        </div>
+        <div class="form-group" style="margin-right: 10px;">
+          <label>New Time: </label>
+          <input type="time" name="newStartTime" class="form-control" step="900" required="required" />
+        </div>
+        <button class="btn btn-default" type="submit">Reschedule</button>
+      </form>
+    </div>
+  </div>
+
+</body>
+
+</html>

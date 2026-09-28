@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+
+<html xmlns:th="https://www.thymeleaf.org" th:replace="~{fragments/layout :: layout (~{::body},'appointments')}">
+
+<body>
+
+  <h2>Appointments</h2>
+
+  <form class="form-inline" style="margin-bottom: 20px;">
+    <div class="form-group">
+      <label>Date: </label>
+      <input type="date" name="date" class="form-control" th:value="${selectedDate}" />
+    </div>
+    <button class="btn btn-default" type="submit">Filter</button>
+  </form>
+
+  <table class="table table-striped" th:if="${appointments != null and !appointments.isEmpty()}">
+    <thead>
+      <tr>
+        <th>Time</th>
+        <th>Pet</th>
+        <th>Owner</th>
+        <th>Veterinarian</th>
+        <th>Type</th>
+        <th>Status</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr th:each="appt : ${appointments}">
+        <td th:text="${appt.startTime + ' - ' + appt.endTime}">Time</td>
+        <td th:text="${appt.pet.name}">Pet</td>
+        <td th:if="${appt.pet.owner != null}" th:text="${appt.pet.owner.firstName + ' ' + appt.pet.owner.lastName}">Owner</td>
+        <td th:if="${appt.pet.owner == null}">-</td>
+        <td th:text="${appt.vet.firstName + ' ' + appt.vet.lastName}">Vet</td>
+        <td th:text="${appt.appointmentType}">Type</td>
+        <td>
+          <span class="label"
+                th:classappend="${appt.status.name() == 'CONFIRMED' ? 'label-primary' :
+                                 appt.status.name() == 'COMPLETED' ? 'label-success' :
+                                 appt.status.name() == 'CANCELLED' ? 'label-danger' :
+                                 appt.status.name() == 'NO_SHOW' ? 'label-warning' :
+                                 appt.status.name() == 'IN_PROGRESS' ? 'label-info' :
+                                 'label-default'}"
+                th:text="${appt.status}">Status</span>
+        </td>
+        <td>
+          <a th:href="@{/appointments/{id}(id=${appt.id})}">View</a>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <p th:if="${appointments == null or appointments.isEmpty()}">No appointments found for this date.</p>
+
+</body>
+
+</html>
